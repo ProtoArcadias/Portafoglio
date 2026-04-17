@@ -1,14 +1,8 @@
-[
-  {
-    "relation": [
-      "delegate_permission/common.handle_all_urls"
-    ],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "io.github.protoarcadias.twa",
-      "sha256_cert_fingerprints": [
-        "53:84:F6:B0:D0:FC:BF:F7:A6:F2:37:37:A3:36:A7:B4:F4:3E:82:2B:C7:AC:B1:C4:B1:B2:DE:09:1A:6C:A7:D6"
-      ]
-    }
-  }
-]
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.protoarcadias.twa",
+        "sha256_cert_fingerprints": ["AB:71:02:F4:E7:0C:D8:92:3B:5D:56:9A:82:55:B5:36:BB:23:03:BF:CF:B8:36:85:7E:B5:5B:B2:AC:44:52:BE"]
+      }
+    }]
