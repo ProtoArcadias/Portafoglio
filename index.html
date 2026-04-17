@@ -1137,9 +1137,11 @@ function toggleAutoReg(v){
 function resetAll(){
   if(!confirm('Sei sicuro? Verranno cancellati TUTTI i dati. Operazione irreversibile.'))return;
   if(!confirm('Ultima conferma: hai esportato il backup JSON?'))return;
-  // Cancella tutto il localStorage
+  localStorage.removeItem('pfv4');
+  localStorage.removeItem('portafoglio_v5_clean');
+  localStorage.removeItem('portafoglio_pwa_v1');
+  localStorage.removeItem('portafoglio_pwa_v2');
   try{localStorage.clear();}catch(ex){}
-  // Ricarica la pagina — riparte completamente vuota
   window.location.reload(true);
 }
 function sT(t){S.activeTab=t;render()}
