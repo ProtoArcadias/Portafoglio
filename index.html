@@ -1134,15 +1134,67 @@ function toggleAutoReg(v){
   S.settings.autoRegister=v;
   saveData();render()
 }
+function exportData(){
+  try{
+    var data=JSON.stringify(S,null,2);
+    var blob=new Blob([data],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download='portafoglio_'+now.toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }catch(e){alert('Errore export: '+e.message);}
+}
+function importData(){
+  var inp=document.createElement('input');
+  inp.type='file';
+  inp.accept='.json,application/json,text/plain,*/*';
+  inp.style.display='none';
+  document.body.appendChild(inp);
+  inp.onchange=function(e){
+    var f=e.target.files[0];
+    if(!f)return;
+    var rd=new FileReader();
+    rd.onload=function(ev){
+      try{
+        var p=JSON.parse(ev.target.result);
+        if(p.accounts&&p.transactions){
+          Object.assign(S,p);
+          saveData();render();
+          alert('Importato!');
+        }else{alert('File non valido');}
+      }catch(ex){alert('Errore: '+ex.message);}
+    };
+    rd.readAsText(f);
+    document.body.removeChild(inp);
+  };
+  inp.click();
+}
 function resetAll(){
   if(!confirm('Sei sicuro? Verranno cancellati TUTTI i dati. Operazione irreversibile.'))return;
   if(!confirm('Ultima conferma: hai esportato il backup JSON?'))return;
-  localStorage.removeItem('pfv4');
-  localStorage.removeItem('portafoglio_v5_clean');
-  localStorage.removeItem('portafoglio_pwa_v1');
-  localStorage.removeItem('portafoglio_pwa_v2');
   try{localStorage.clear();}catch(ex){}
-  window.location.reload(true);
+  try{localStorage.removeItem('pfv4');}catch(ex){}
+  // Resetta S direttamente in memoria senza reload
+  S.accounts=[];
+  S.transactions=[];
+  S.recurring=[];
+  S.goals=[];
+  S.investments=[];
+  S.autoRegistered=[];
+  S.nextId=1;
+  S.viewYear=now.getFullYear();
+  S.viewMonth=now.getMonth();
+  S.activeTab='overview';
+  S.filterAccount='all';
+  S.sim={monthly:200,rate:7,years:20};
+  S.settings={autoRegister:true,tabs:{overview:true,movements:true,accounts:true,joint:true,transfer:true,projection:true,chart:true,simulator:true,alerts:true,goals:true,calendar:true,investments:true}};
+  saveData();
+  render();
+  alert('Reset completato! App svuotata.');
 }
 function sT(t){S.activeTab=t;render()}
 function pM(){if(S.viewMonth===0){S.viewMonth=11;S.viewYear--}else S.viewMonth--;render()}
