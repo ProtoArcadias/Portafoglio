@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Portafoglio"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="application-name" content="Portafoglio"/>
+<meta name="theme-color" content="#1c1c1b" media="(prefers-color-scheme: dark)"/>
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+<meta name="description" content="Gestione finanziaria personale"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"/>
+<title>Il mio portafoglio</title>
+<style>
+:root{
+  --bg:#ffffff;--bg2:#f5f5f4;--bg3:#eeece8;
+  --txt:#1a1a1a;--txt2:#6b6b6b;--txt3:#9d9b96;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
+  --green:#1d9e75;--green-bg:#e1f5ee;--green-txt:#085041;
+  --red:#e24b4a;--red-bg:#fcebeb;--red-txt:#501313;
+  --blue:#378add;--blue-bg:#e6f1fb;--blue-txt:#042c53;
+  --amber:#ba7517;--amber-bg:#faeeda;--amber-txt:#412402;
+  --pink:#d4537e;--pink-bg:#fbeaf0;--pink-txt:#4b1528;
+  --r-md:8px;--r-lg:12px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1b;--bg2:#262624;--bg3:#2e2e2c;
+    --txt:#e8e6e1;--txt2:#a09e99;--txt3:#6b6966;
+    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+    --green:#5dcaa5;--green-bg:#04342c;--green-txt:#9fe1cb;
+    --red:#f09595;--red-bg:#501313;--red-txt:#f7c1c1;
+    --blue:#85b7eb;--blue-bg:#042c53;--blue-txt:#b5d4f4;
+    --amber:#ef9f27;--amber-bg:#412402;--amber-txt:#fac775;
+    --pink:#ed93b1;--pink-bg:#4b1528;--pink-txt:#f4c0d1;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg3);color:var(--txt);font-size:15px;min-height:100vh}
+#app{max-width:900px;margin:0 auto;padding:16px 12px 80px}
+h1{font-size:22px;font-weight:600;color:var(--txt)}
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.mnav{display:flex;align-items:center;gap:8px}
+.mnav button{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);padding:5px 11px;cursor:pointer;font-size:13px;color:var(--txt2)}
+.mnav button:hover{background:var(--bg2)}
+.mlbl{font-size:14px;font-weight:600;color:var(--txt);min-width:130px;text-align:center}
+.net-bar{background:var(--bg2);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid var(--border)}
+.net-main .lbl{font-size:12px;color:var(--txt3);margin-bottom:2px}
+.net-main .val{font-size:30px;font-weight:700;color:var(--txt)}
+.net-items{display:flex;gap:20px;flex-wrap:wrap}
+.net-items span{font-size:13px;color:var(--txt2)}
+.net-items strong{color:var(--txt)}
+.tabs-wrap{margin-bottom:16px;border-bottom:1px solid var(--border)}
+.tabs{display:flex;flex-wrap:wrap}
+.tab{padding:10px 14px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;color:var(--txt2);background:none;border-top:none;border-left:none;border-right:none;margin-bottom:-1px;flex-shrink:0;font-weight:500}
+.tab.active{color:var(--txt);border-bottom-color:var(--txt);font-weight:600}
+.tab:hover{color:var(--txt)}
+.cards{display:grid;gap:10px;margin-bottom:16px}
+.card{background:var(--bg2);border-radius:var(--r-md);padding:12px 14px;border:1px solid var(--border)}
+.card .lbl{font-size:11px;color:var(--txt3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.card .val{font-size:20px;font-weight:600}
+.sec{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:12px}
+.stitle{font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.frow{display:grid;gap:8px;align-items:end}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:12px;color:var(--txt3)}
+input,select,textarea{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-md);padding:8px 10px;font-size:14px;color:var(--txt);width:100%;font-family:inherit;-webkit-appearance:none;appearance:none}
+input:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(55,138,221,0.15)}
+input[type=range]{padding:4px 0;background:none;border:none;box-shadow:none;accent-color:var(--blue)}
+.btn{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r-md);padding:8px 14px;cursor:pointer;font-size:13px;color:var(--txt);white-space:nowrap;font-family:inherit;font-weight:500;transition:opacity .15s}
+.btn:hover{opacity:.8}
+.btn:active{transform:scale(.97)}
+.bok{background:var(--green-bg);border-color:var(--green);color:var(--green-txt)}
+.binfo{background:var(--blue-bg);border-color:var(--blue);color:var(--blue-txt)}
+.bwarn{background:var(--amber-bg);border-color:var(--amber);color:var(--amber-txt)}
+.bdanger{background:var(--red-bg);border-color:var(--red);color:var(--red-txt)}
+.bpink{background:var(--pink-bg);border-color:var(--pink);color:var(--pink-txt)}
+.tx-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-md);background:var(--bg2);margin-bottom:6px;border:1px solid var(--border)}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.d-in{background:var(--green)} .d-out{background:var(--red)} .d-inv{background:var(--blue)} .d-rec{background:var(--amber)} .d-tr{background:var(--txt3)} .d-jt{background:var(--pink)}
+.del{background:none;border:none;cursor:pointer;color:var(--txt3);font-size:16px;padding:2px 6px;border-radius:4px;opacity:.5;font-family:inherit}
+.del:hover{opacity:1;color:var(--red)}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:20px;margin-left:5px;font-weight:500}
+.tag-inv{background:var(--blue-bg);color:var(--blue-txt)}
+.tag-rec{background:var(--amber-bg);color:var(--amber-txt)}
+.tag-tr{background:var(--bg2);color:var(--txt2);border:1px solid var(--border)}
+.tag-jt{background:var(--pink-bg);color:var(--pink-txt)}
+.cpos{color:var(--green)} .cneg{color:var(--red)} .cinv{color:var(--blue)} .cwarn{color:var(--amber)} .cpink{color:var(--pink)} .cmut{color:var(--txt3)}
+.empty{text-align:center;color:var(--txt3);font-size:13px;padding:28px}
+.abox{border-radius:var(--r-lg);padding:13px 16px;margin-bottom:10px;font-size:13px;line-height:1.6;border:1px solid}
+.abox.success{background:var(--green-bg);border-color:var(--green);color:var(--green-txt)}
+.abox.danger{background:var(--red-bg);border-color:var(--red);color:var(--red-txt)}
+.abox.warning{background:var(--amber-bg);border-color:var(--amber);color:var(--amber-txt)}
+.abox.info{background:var(--blue-bg);border-color:var(--blue);color:var(--blue-txt)}
+.pbar{height:8px;border-radius:4px;background:var(--bg3);margin:6px 0;overflow:hidden;border:1px solid var(--border)}
+.pfill{height:100%;border-radius:4px;transition:width .5s}
+.f-ok{background:var(--green)} .f-warn{background:var(--amber)} .f-danger{background:var(--red)} .f-info{background:var(--blue)} .f-pink{background:var(--pink)}
+.goal-card{border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:10px;background:var(--bg)}
+.goal-card.done{border-color:var(--green);background:var(--green-bg)}
+.goal-card.urgent{border-color:var(--red)}
+.inv-card{border:1px solid var(--border);border-radius:var(--r-md);padding:12px;margin-bottom:8px;background:var(--bg)}
+.saving-plan{border:1px solid var(--blue);border-radius:var(--r-lg);padding:14px;background:var(--blue-bg);margin-bottom:8px}
+.cal-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-md);border:1px solid var(--border);margin-bottom:8px;background:var(--bg)}
+.mbadge{min-width:42px;height:42px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-direction:column;line-height:1.2;flex-shrink:0}
+.mb-warn{background:var(--amber-bg);color:var(--amber-txt)}
+.mb-info{background:var(--blue-bg);color:var(--blue-txt)}
+.mb-neu{background:var(--bg2);color:var(--txt2)}
+.acc-card{border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:10px;background:var(--bg);cursor:pointer}
+.acc-card:hover{border-color:var(--border2)}
+.acc-card.joint-card{border-color:var(--pink);background:var(--pink-bg)}
+.jt-header{background:var(--pink-bg);border:1px solid var(--pink);border-radius:var(--r-md);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.sim-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.sim-row label{font-size:13px;color:var(--txt2);min-width:170px}
+.sim-row input[type=range]{flex:1;min-width:100px}
+.sim-val{font-size:14px;font-weight:600;min-width:72px;text-align:right;color:var(--txt)}
+.sim-result{background:var(--bg2);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:12px;border:1px solid var(--border)}
+.filter-bar{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center;overflow-x:auto;padding-bottom:2px}
+.filter-chip{padding:5px 13px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border2);background:var(--bg2);color:var(--txt2);white-space:nowrap;font-family:inherit;font-weight:500}
+.filter-chip.active{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-txt)}
+.filter-chip.active-pink{border-color:var(--pink);background:var(--pink-bg);color:var(--pink-txt)}
+.badge{display:inline-block;background:var(--red-bg);color:var(--red-txt);font-size:11px;padding:1px 6px;border-radius:10px;margin-left:4px;font-weight:600}
+.badge-ok{background:var(--green-bg);color:var(--green-txt)}
+.chart-wrap{height:280px;position:relative;margin-top:8px}
+.save-indicator{position:fixed;bottom:16px;right:16px;background:var(--green-bg);color:var(--green-txt);border:1px solid var(--green);border-radius:var(--r-lg);padding:8px 14px;font-size:12px;font-weight:600;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
+.save-indicator.show{opacity:1}
+@media(max-width:600px){
+  #app{padding:12px 8px 90px}
+  .frow{grid-template-columns:1fr !important}
+  .cards{grid-template-columns:1fr 1fr !important}
+  .net-bar{flex-direction:column;gap:8px}
+  .chart-wrap{height:220px}
+  h1{font-size:19px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="save-indicator" id="save-ind">✓ Salvato</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const MO=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const MS=['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+const CATS={income:['Stipendio','Freelance','Dividendi','Bonus','Rimborso','Altro'],expense:['Affitto','Spesa','Bollette','Trasporti','Ristorazione','Abbonamenti','Salute','Svago','Vestiario','Altro'],invest:['ETF','Azioni','Obbligazioni','Criptovalute','Fondo','Altro']};
+const RECURS=[{v:'once',l:'Una tantum'},{v:'monthly',l:'Mensile'},{v:'3months',l:'Ogni 3 mesi'},{v:'6months',l:'Ogni 6 mesi'},{v:'yearly',l:'Annuale'}];
+const GOAL_TYPES=[{v:'save',l:'Risparmio'},{v:'invest',l:'Investimento'},{v:'buy',l:'Acquisto'},{v:'debt',l:'Saldo debito'}];
+const ACC_TYPES=[{v:'checking',l:'Conto corrente',icon:'🏦'},{v:'savings',l:'Conto deposito',icon:'🏧'},{v:'investment',l:'Conto titoli',icon:'📈'},{v:'joint',l:'Cointestato',icon:'👫'},{v:'cash',l:'Contanti',icon:'💵'},{v:'crypto',l:'Crypto wallet',icon:'🔐'},{v:'other',l:'Altro',icon:'🗂️'}];
+
+const now=new Date();
+function pad(n){return String(n).padStart(2,'0')}
+function fmt(n){const v=Math.abs(n).toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:2});return(n<0?'-':'')+'\u20ac'+v}
+function daysLeft(s){return Math.ceil((new Date(s)-now)/(864e5))}
+function monthsLeft(s){const d=new Date(s);return Math.max(0,(d.getFullYear()-now.getFullYear())*12+(d.getMonth()-now.getMonth()))}
+
+// ── DATI DEFAULT ──
+const DEFAULT_DATA={
+  viewYear:now.getFullYear(), viewMonth:now.getMonth(), activeTab:'overview', filterAccount:'all',
+  accounts:[
+    {id:1,name:'Conto Corrente',type:'checking',icon:'🏦',color:'info',initialBalance:2400,note:'Conto principale stipendio'},
+    {id:2,name:'Conto Deposito',type:'savings',icon:'🏧',color:'success',initialBalance:5000,note:'Fondo emergenza'},
+    {id:3,name:'Conto Investimenti',type:'investment',icon:'📈',color:'warning',initialBalance:650,note:'ETF'},
+    {id:4,name:'Conto Cointestato',type:'joint',icon:'👫',color:'pink',initialBalance:800,note:'Spese comuni',isJoint:true,partnerName:'Partner',myMonthly:200,partnerMonthly:200}
+  ],
+  transactions:[
+  ],
+  recurring:[
+  ],
+  goals:[
+  ],
+  investments:[
+  ],
+  sim:{monthly:200,rate:7,years:20},
+  nextId:1,
+  settings:{
+    tabs:{overview:true,movements:true,joint:true,transfer:true,chart:true,simulator:true,alerts:true,goals:true,calendar:true,investments:true,accounts:true,projection:true},
+    autoRegister:true
+  },
+  autoRegistered:[],
+  txForm:{type:'income',category:'Stipendio',desc:'',amount:'',accountId:1},
+  trForm:{fromId:1,toId:2,amount:'',desc:'Trasferimento'},
+  accForm:{name:'',type:'checking',initialBalance:'',note:'',isJoint:false,partnerName:'',myMonthly:200,partnerMonthly:200},
+  recForm:{name:'',amount:'',month:now.getMonth(),recur:'yearly',category:'Trasporti',accountId:null},
+  goalForm:{name:'',type:'save',target:'',deadline:`${now.getFullYear()+1}-${pad(now.getMonth()+1)}-01`,notes:'',accountId:null},
+  invForm:{name:'',monthly:'',val:'',accountId:3},
+  editInvId:null,editInvVal:'',editDivId:null,divAmt:''
+};
+
+// ── PERSISTENZA ──
+function loadData(){
+  try{
+    const saved=localStorage.getItem('pfv4');
+    if(saved){
+      const parsed=JSON.parse(saved);
+      return Object.assign({},DEFAULT_DATA,parsed);
+    }
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+let saveTimer=null;
+function saveData(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    try{
+      const toSave={...S};
+      delete toSave.txForm; delete toSave.trForm; delete toSave.accForm;
+      delete toSave.recForm; delete toSave.goalForm; delete toSave.invForm;
+      delete toSave.editInvId; delete toSave.editInvVal; delete toSave.editDivId; delete toSave.divAmt;
+      toSave.viewYear=S.viewYear; toSave.viewMonth=S.viewMonth;
+      localStorage.setItem('pfv4',JSON.stringify(toSave));
+      const ind=document.getElementById('save-ind');
+      if(ind){ind.classList.add('show');setTimeout(()=>ind.classList.remove('show'),1800)}
+    }catch(e){}
+  },600);
+}
+
+// Se ?reset nell'URL, svuota localStorage e riparte pulito
+if(window.location.search.includes('reset')){
+  try{localStorage.clear();sessionStorage.clear();}catch(e){}
+  history.replaceState(null,'',window.location.pathname);
+}
+let S=loadData();
+// Assicura che i campi nuovi esistano anche su dati salvati vecchi
+if(!S.settings){S.settings={tabs:{overview:true,movements:true,joint:true,transfer:true,chart:true,simulator:true,alerts:true,goals:true,calendar:true,investments:true,accounts:true,projection:true},autoRegister:true};}
+if(!S.settings.tabs)S.settings.tabs={overview:true,movements:true,joint:true,transfer:true,chart:true,simulator:true,alerts:true,goals:true,calendar:true,investments:true,accounts:true,projection:true};
+if(S.settings.tabs.projection===undefined)S.settings.tabs.projection=true;
+if(!S.autoRegistered)S.autoRegistered=[];
+
+// ── HELPERS ──
+function accById(id){return S.accounts.find(a=>a.id===id)}
+function accBalance(accId){
+  const acc=accById(accId);if(!acc)return 0;
+  let bal=acc.initialBalance||0;
+  S.transactions.forEach(t=>{
+    if(t.type==='transfer'){if(t.accountId===accId)bal-=t.amount;if(t.toAccountId===accId)bal+=t.amount;}
+    else{if(t.accountId!==accId)return;if(t.type==='income')bal+=t.amount;else if(t.type==='expense'||t.type==='invest')bal-=t.amount;}
+  });
+  return bal;
+}
+function netWorth(){return S.accounts.reduce((s,a)=>s+accBalance(a.id),0)}
+function monthTxs(y,m,accId){
+  return S.transactions.filter(t=>{
+    const d=new Date(t.date);
+    if(d.getFullYear()!==y||d.getMonth()!==m)return false;
+    if(accId&&accId!=='all')return t.accountId===parseInt(accId)||(t.type==='transfer'&&t.toAccountId===parseInt(accId));
+    return true;
+  });
+}
+function calcMonth(y,m,accId){
+  let inc=0,exp=0,inv=0;
+  S.transactions.forEach(t=>{
+    const d=new Date(t.date);
+    if(d.getFullYear()!==y||d.getMonth()!==m)return;
+    if(t.type==='transfer')return;
+    if(accId&&accId!=='all'&&t.accountId!==parseInt(accId))return;
+    if(t.type==='income')inc+=t.amount;
+    else if(t.type==='expense')exp+=t.amount;
+    else if(t.type==='invest')inv+=t.amount;
+  });
+  return{inc,exp,inv,bal:inc-exp};
+}
+function last12Months(){
+  const res=[];
+  for(let i=11;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const s=calcMonth(d.getFullYear(),d.getMonth(),null);
+    res.push({label:MS[d.getMonth()]+"'"+String(d.getFullYear()).slice(2),y:d.getFullYear(),m:d.getMonth(),...s});
+  }
+  return res;
+}
+function getRecurForMonth(y,m){
+  return S.recurring.filter(r=>{
+    if(r.recur==='monthly')return true;
+    if(r.recur==='once')return r.month===m;
+    if(r.recur==='yearly')return r.month===m;
+    const iv=r.recur==='6months'?6:3;
+    return((m-r.month)%iv+iv)%iv===0;
+  });
+}
+function futurePlans(n=12){
+  const items=[];
+  for(let i=1;i<=n;i++){const d=new Date(now.getFullYear(),now.getMonth()+i,1);getRecurForMonth(d.getFullYear(),d.getMonth()).forEach(r=>items.push({...r,fy:d.getFullYear(),fm:d.getMonth(),away:i}));}
+  return items;
+}
+function savingPlans(){
+  const seen={};
+  return futurePlans(12).filter(p=>{const k=`${p.id}-${p.fy}-${p.fm}`;if(seen[k])return false;seen[k]=true;return true})
+    .map(p=>({...p,needed:Math.max(0,Math.ceil((p.amount-(p.saved||0))/p.away))})).sort((a,b)=>a.away-b.away);
+}
+function accColor(acc){
+  if(!acc)return'var(--bg2)';
+  const m={info:'var(--blue-bg)',success:'var(--green-bg)',warning:'var(--amber-bg)',danger:'var(--red-bg)',pink:'var(--pink-bg)',secondary:'var(--bg2)'};
+  return m[acc.color]||m.secondary;
+}
+function accTextColor(acc){
+  if(!acc)return'var(--txt2)';
+  const m={info:'var(--blue-txt)',success:'var(--green-txt)',warning:'var(--amber-txt)',danger:'var(--red-txt)',pink:'var(--pink-txt)',secondary:'var(--txt2)'};
+  return m[acc.color]||m.secondary;
+}
+function accBorderColor(acc){
+  if(!acc)return'var(--border)';
+  const m={info:'var(--blue)',success:'var(--green)',warning:'var(--amber)',danger:'var(--red)',pink:'var(--pink)',secondary:'var(--border2)'};
+  return m[acc.color]||m.secondary;
+}
+function chipAcc(acc){
+  if(!acc)return'';
+  return`<span style="background:${accColor(acc)};color:${accTextColor(acc)};border:1px solid ${accBorderColor(acc)};padding:1px 8px;border-radius:20px;font-size:11px;font-weight:500;display:inline-block">${acc.icon} ${acc.name}</span>`;
+}
+
+function generateAlerts(){
+  const alerts=[];
+  const{inc,exp,inv,bal}=calcMonth(S.viewYear,S.viewMonth,null);
+  const savRate=inc>0?bal/inc:0;
+  if(bal<0)alerts.push({type:'danger',icon:'⚠️',title:'Mese in rosso',text:`Hai speso ${fmt(Math.abs(bal))} più di quanto hai guadagnato. Il mese prossimo recupera almeno ${fmt(Math.abs(bal))}.`});
+  else if(savRate>=0.3)alerts.push({type:'success',icon:'🎯',title:'Ottimo risparmio!',text:`Hai risparmiato il ${(savRate*100).toFixed(0)}% del reddito (${fmt(bal)}). Considera di trasferire ${fmt(Math.round(bal*0.5))} sul conto deposito.`});
+  else if(savRate>0&&savRate<0.1&&inc>0)alerts.push({type:'warning',icon:'📉',title:'Risparmio basso',text:`Solo il ${(savRate*100).toFixed(0)}% risparmiato (${fmt(bal)}). Prova a tagliare qualche spesa variabile.`});
+  else if(savRate>=0.1&&savRate<0.3&&inc>0)alerts.push({type:'info',icon:'📊',title:'Buon ritmo',text:`Risparmio del ${(savRate*100).toFixed(0)}% (${fmt(bal)}). Stai andando bene!`});
+  const recThis=getRecurForMonth(S.viewYear,S.viewMonth);
+  if(recThis.length>0){const tot=recThis.reduce((a,r)=>a+r.amount,0);alerts.push({type:'warning',icon:'🗓️',title:'Spese programmate questo mese',text:`${recThis.length} spesa/e per ${fmt(tot)}: ${recThis.map(r=>r.name).join(', ')}.`});}
+  savingPlans().slice(0,2).forEach(p=>{if(p.away<=3)alerts.push({type:'warning',icon:'📅',title:`${MO[p.fm]}: ${p.name}`,text:`Tra ${p.away} ${p.away===1?'mese':'mesi'} — ${fmt(p.amount)}. Serve ${fmt(p.needed)}/mese.`});});
+  S.goals.forEach(g=>{
+    const pct=(g.saved/g.target)*100;const ml=monthsLeft(g.deadline);const dl=daysLeft(g.deadline);
+    if(pct>=100){alerts.push({type:'success',icon:'🏆',title:`Obiettivo raggiunto: ${g.name}`,text:`Hai raggiunto ${fmt(g.target)}. Ottimo lavoro!`});return}
+    if(dl<=30&&dl>0)alerts.push({type:'danger',icon:'🚨',title:`Urgente: ${g.name}`,text:`${dl} giorni rimasti! Mancano ${fmt(g.target-g.saved)}.`});
+    else if(pct<30&&ml<=6)alerts.push({type:'warning',icon:'⚠️',title:`In ritardo: ${g.name}`,text:`${pct.toFixed(0)}% con ${ml} mesi rimasti. Serve ${fmt(Math.ceil((g.target-g.saved)/Math.max(1,ml)))}/mese.`});
+  });
+  S.accounts.filter(a=>a.isJoint).forEach(a=>{
+    const b=accBalance(a.id);
+    if(b<0)alerts.push({type:'danger',icon:'👫',title:`Cointestato in negativo`,text:`Il conto ${a.name} è in rosso di ${fmt(Math.abs(b))}. Necessario un versamento.`});
+    else if(b<(a.myMonthly+a.partnerMonthly))alerts.push({type:'warning',icon:'👫',title:`Cointestato: saldo basso`,text:`Il conto ${a.name} ha solo ${fmt(b)}. Ricorda i versamenti mensili.`});
+  });
+  return alerts;
+}
+
+function compoundCalc(monthly,rate,years){
+  const r=rate/100/12;const n=years*12;
+  if(r===0)return{final:monthly*n,invested:monthly*n,gain:0,data:[]};
+  const final=monthly*(Math.pow(1+r,n)-1)/r;
+  const invested=monthly*n;
+  const data=[];
+  for(let y=1;y<=years;y++){
+    const v=monthly*(Math.pow(1+r,y*12)-1)/r;
+    data.push({y,v:Math.round(v),inv:monthly*y*12});
+  }
+  return{final:Math.round(final),invested:Math.round(invested),gain:Math.round(final-invested),data};
+}
+
+
+// ── AUTO-REGISTRAZIONE ──
+function autoRegisterDue(){
+  if(!S.settings?.autoRegister) return;
+  if(!S.autoRegistered)S.autoRegistered=[];
+  // Solo mese corrente REALE — navigare la storia non deve aggiungere transazioni
+  const y=now.getFullYear(), m=now.getMonth();
+  const todayDay=now.getDate();
+  let changed=false;
+  getRecurForMonth(y,m).forEach(r=>{
+    const key=`${r.id}-${y}-${m}`;
+    if(S.autoRegistered.includes(key)) return;
+    const day=r.day||1;
+    if(day>todayDay) return;
+    S.transactions.push({
+      id:S.nextId++,
+      date:`${y}-${pad(m+1)}-${pad(day)}`,
+      type:'expense',category:r.category,
+      desc:r.name,amount:r.amount,
+      accountId:r.accountId||S.accounts[0]?.id,
+      autoReg:true
+    });
+    S.autoRegistered.push(key);
+    changed=true;
+  });
+  if(changed) saveData();
+}
+
+// ── PROIEZIONE 3 MESI ──
+function buildProjection(){
+  // Media entrate ultimi 3 mesi (escludo mese corrente)
+  let avgInc=0;
+  for(let i=1;i<=3;i++){
+    const d=new Date(S.viewYear,S.viewMonth-i,1);
+    avgInc+=calcMonth(d.getFullYear(),d.getMonth(),null).inc;
+  }
+  avgInc=avgInc/3||0;
+
+  const months=[];
+  let runningBal=netWorth();
+  for(let i=1;i<=3;i++){
+    const d=new Date(S.viewYear,S.viewMonth+i,1);
+    const y=d.getFullYear(), m=d.getMonth();
+    const recs=getRecurForMonth(y,m);
+    const recExp=recs.reduce((s,r)=>s+r.amount,0);
+    const jt=S.accounts.filter(a=>a.isJoint).reduce((s,a)=>s+a.myMonthly,0);
+    const expectedExp=recExp+jt;
+    const expectedSav=Math.max(0,avgInc-expectedExp);
+    runningBal+=avgInc-expectedExp;
+    months.push({
+      y,m,label:`${MO[m].slice(0,3)} ${y}`,
+      avgInc:Math.round(avgInc),
+      recExp,jt,
+      expectedExp:Math.round(expectedExp),
+      expectedSav:Math.round(expectedSav),
+      projBal:Math.round(runningBal),
+      recs
+    });
+  }
+  return months;
+}
+
+let chartInst=null,simChartInst=null;
+function drawTrendChart(){
+  const el=document.getElementById('trend-chart');if(!el)return;
+  if(chartInst){chartInst.destroy();chartInst=null;}
+  const months=last12Months();
+  const dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const gridC=dark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)';
+  const txtC=dark?'rgba(255,255,255,0.45)':'rgba(0,0,0,0.4)';
+  chartInst=new Chart(el,{
+    type:'bar',
+    data:{
+      labels:months.map(m=>m.label),
+      datasets:[
+        {label:'Entrate',data:months.map(m=>m.inc),backgroundColor:'rgba(29,158,117,0.7)',borderRadius:4},
+        {label:'Uscite',data:months.map(m=>m.exp),backgroundColor:'rgba(226,75,74,0.65)',borderRadius:4},
+        {label:'Investito',data:months.map(m=>m.inv),backgroundColor:'rgba(55,138,221,0.45)',borderRadius:4},
+        {label:'Saldo',data:months.map(m=>m.bal),type:'line',borderColor:'rgba(55,138,221,0.9)',backgroundColor:'rgba(55,138,221,0.08)',borderWidth:2,pointRadius:3,pointBackgroundColor:'rgba(55,138,221,1)',fill:true,tension:.3,yAxisID:'y1'}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{color:txtC,font:{size:12},boxWidth:12,padding:14}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
+      scales:{
+        x:{grid:{color:gridC},ticks:{color:txtC,font:{size:11},maxTicksLimit:12}},
+        y:{grid:{color:gridC},ticks:{color:txtC,font:{size:11},callback:v=>'€'+Math.round(v).toLocaleString('it-IT')}},
+        y1:{position:'right',grid:{display:false},ticks:{color:txtC,font:{size:11},callback:v=>'€'+Math.round(v).toLocaleString('it-IT')}}
+      }
+    }
+  });
+}
+function drawSimChart(data){
+  const el=document.getElementById('sim-chart');if(!el)return;
+  if(simChartInst){simChartInst.destroy();simChartInst=null;}
+  const dark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const gridC=dark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)';
+  const txtC=dark?'rgba(255,255,255,0.45)':'rgba(0,0,0,0.4)';
+  simChartInst=new Chart(el,{
+    type:'bar',
+    data:{
+      labels:data.map(d=>`Anno ${d.y}`),
+      datasets:[
+        {label:'Versato',data:data.map(d=>d.inv),backgroundColor:'rgba(55,138,221,0.45)',borderRadius:3},
+        {label:'Valore',data:data.map(d=>d.v),backgroundColor:'rgba(29,158,117,0.7)',borderRadius:3}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:txtC,font:{size:12},boxWidth:12,padding:12}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}},
+      scales:{
+        x:{grid:{color:gridC},ticks:{color:txtC,font:{size:11},maxTicksLimit:10}},
+        y:{grid:{color:gridC},ticks:{color:txtC,font:{size:11},callback:v=>'€'+Math.round(v).toLocaleString('it-IT')}}
+      }
+    }
+  });
+}
+
+// ── RENDER ──
+function render(){
+  autoRegisterDue();
+  const nw=netWorth();
+  const txs=monthTxs(S.viewYear,S.viewMonth,S.filterAccount==='all'?null:S.filterAccount).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const alerts=generateAlerts();
+  const recThis=getRecurForMonth(S.viewYear,S.viewMonth);
+  const plans=savingPlans();
+  const cats=CATS[S.txForm.type]||[];
+  const liquid=S.accounts.filter(a=>a.type!=='investment'&&a.type!=='crypto').reduce((s,a)=>s+accBalance(a.id),0);
+  const invested=S.accounts.filter(a=>a.type==='investment'||a.type==='crypto').reduce((s,a)=>s+accBalance(a.id),0);
+  const jointAccs=S.accounts.filter(a=>a.isJoint);
+  const totGoals=S.goals.length;
+  const doneGoals=S.goals.filter(g=>g.saved>=g.target).length;
+
+  let h=`
+  <div class="hdr">
+    <h1>💼 Il mio portafoglio</h1>
+    <div class="mnav">
+      <button onclick="pM()">←</button>
+      <span class="mlbl">${MO[S.viewMonth]} ${S.viewYear}</span>
+      <button onclick="nM()">→</button>
+    </div>
+  </div>
+  <div class="net-bar">
+    <div class="net-main"><div class="lbl">Patrimonio netto</div><div class="val">${fmt(nw)}</div></div>
+    <div class="net-items">
+      <span>Liquidità: <strong class="cpos">${fmt(liquid)}</strong></span>
+      <span>Investito: <strong class="cinv">${fmt(invested)}</strong></span>
+      <span>Conti: <strong>${S.accounts.length}</strong></span>
+      ${(()=>{const p=buildProjection();const next=p[0];if(!next)return'';const ok=next.projBal>=0;return`<span>Mese prossimo: <strong style="color:${ok?'var(--green)':'var(--red)'}">${ok?'+':''}${fmt(next.projBal)}</strong></span>`;})()}
+    </div>
+  </div>
+  <div class="tabs-wrap"><div class="tabs">
+    <button class="tab ${S.activeTab==='overview'?'active':''}" onclick="sT('overview')">🏠 Home</button>
+    <button class="tab ${S.activeTab==='movements'?'active':''}" onclick="sT('movements')">📋 Movimenti</button>
+    <button class="tab ${S.activeTab==='joint'?'active':''}" onclick="sT('joint')">👫 Cointestato</button>
+    <button class="tab ${S.activeTab==='transfer'?'active':''}" onclick="sT('transfer')">⇄ Trasferimenti</button>
+    <button class="tab ${S.activeTab==='chart'?'active':''}" onclick="sT('chart')">📊 Grafico</button>
+    <button class="tab ${S.activeTab==='simulator'?'active':''}" onclick="sT('simulator')">🧮 Simulatore</button>
+    <button class="tab ${S.activeTab==='alerts'?'active':''}" onclick="sT('alerts')">🔔 Alert${alerts.length>0?`<span class="badge">${alerts.length}</span>`:''}</button>
+    <button class="tab ${S.activeTab==='goals'?'active':''}" onclick="sT('goals')">🎯 Obiettivi${totGoals>0?`<span class="badge ${doneGoals===totGoals?'badge-ok':''}">${doneGoals}/${totGoals}</span>`:''}</button>
+    <button class="tab ${S.activeTab==='calendar'?'active':''}" onclick="sT('calendar')">📅 Programmato</button>
+    <button class="tab ${S.activeTab==='investments'?'active':''}" onclick="sT('investments')">📈 Investimenti</button>
+    <button class="tab ${S.activeTab==='accounts'?'active':''}" onclick="sT('accounts')">🏦 Conti</button>
+    <button class="tab ${S.activeTab==='settings'?'active':''}" onclick="sT('settings')">⚙️ Impostazioni</button>
+  </div></div>`;
+
+  // ── PANORAMICA ──
+  if(S.activeTab==='overview'){
+    h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px">`;
+    S.accounts.forEach(acc=>{
+      const bal=accBalance(acc.id);const ms=calcMonth(S.viewYear,S.viewMonth,acc.id);
+      h+=`<div class="acc-card ${acc.isJoint?'joint-card':''}" onclick="${acc.isJoint?`sT('joint')`:`goAcc(${acc.id})`}">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:20px;background:${accColor(acc)};flex-shrink:0">${acc.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${acc.name}</div>
+            <div style="font-size:12px;color:var(--txt3)">${ACC_TYPES.find(t=>t.v===acc.type)?.l}${acc.isJoint?` · con ${acc.partnerName}`:''}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:19px;font-weight:700;color:${bal>=0?'var(--txt)':'var(--red)'}">${fmt(bal)}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap">
+          <span style="font-size:13px">+<strong class="cpos">${fmt(ms.inc)}</strong></span>
+          <span style="font-size:13px">-<strong class="cneg">${fmt(ms.exp)}</strong></span>
+          <span style="font-size:13px">Mese: <strong style="color:${ms.bal>=0?'var(--green)':'var(--red)'}">${ms.bal>=0?'+':''}${fmt(ms.bal)}</strong></span>
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+    if(alerts.length>0){
+      h+=`<div class="sec"><div class="stitle">Ultimi alert</div>`;
+      alerts.slice(0,3).forEach(a=>{h+=`<div class="abox ${a.type}"><strong>${a.icon} ${a.title}</strong><br>${a.text}</div>`;});
+      if(alerts.length>3)h+=`<button class="btn" onclick="sT('alerts')" style="width:100%;margin-top:4px">Vedi tutti (${alerts.length}) →</button>`;
+      h+=`</div>`;
+    }
+  }
+
+  // ── MOVIMENTI ──
+  if(S.activeTab==='movements'){
+    h+=`<div class="sec"><div class="stitle">Aggiungi movimento</div>
+    <div class="frow" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="fg"><label>Conto</label><select id="f-acc">${S.accounts.map(a=>`<option value="${a.id}" ${S.txForm.accountId===a.id?'selected':''}>${a.icon} ${a.name}</option>`).join('')}</select></div>
+      <div class="fg"><label>Tipo</label><select id="ft" onchange="cT()">
+        <option value="income" ${S.txForm.type==='income'?'selected':''}>+ Entrata</option>
+        <option value="expense" ${S.txForm.type==='expense'?'selected':''}>- Uscita</option>
+        <option value="invest" ${S.txForm.type==='invest'?'selected':''}>⤴ Investimento</option>
+      </select></div>
+      <div class="fg"><label>Categoria</label><select id="fc">${cats.map(c=>`<option ${S.txForm.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+    </div>
+    <div class="frow" style="grid-template-columns:1fr 1fr auto;margin-top:8px">
+      <div class="fg"><label>Descrizione</label><input type="text" id="fd" placeholder="es. Stipendio" value="${S.txForm.desc}"/></div>
+      <div class="fg"><label>Importo €</label><input type="number" id="fa" placeholder="0" min="0" step="0.01" inputmode="decimal" value="${S.txForm.amount}"/></div>
+      <div class="fg"><label>&nbsp;</label><button class="btn bok" onclick="addTx()">+ Aggiungi</button></div>
+    </div></div>`;
+    h+=`<div class="filter-bar">
+      <button class="filter-chip ${S.filterAccount==='all'?'active':''}" onclick="setFlt('all')">Tutti</button>
+      ${S.accounts.map(a=>`<button class="filter-chip ${S.filterAccount==a.id?(a.isJoint?'active-pink':'active'):''}" onclick="setFlt(${a.id})">${a.icon} ${a.name}</button>`).join('')}
+    </div>`;
+    const ftxs=S.filterAccount==='all'?txs:txs.filter(t=>t.accountId===parseInt(S.filterAccount)||t.toAccountId===parseInt(S.filterAccount));
+    h+=`<div class="sec"><div class="stitle"><span>${MO[S.viewMonth]} ${S.viewYear}</span><span class="cmut" style="font-size:12px">${ftxs.length} voci</span></div>`;
+    if(ftxs.length===0)h+=`<div class="empty">Nessun movimento</div>`;
+    ftxs.forEach(t=>{
+      const acc=accById(t.accountId);const toAcc=t.toAccountId?accById(t.toAccountId):null;
+      h+=`<div class="tx-row">
+        <div class="dot ${t.type==='income'?'d-in':t.type==='expense'?'d-out':t.type==='invest'?'d-inv':'d-tr'}"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.desc||t.category}${t.type==='invest'?'<span class="tag tag-inv">inv</span>':''}${t.type==='transfer'?'<span class="tag tag-tr">trasf.</span>':''}${t.isPartnerContrib?'<span class="tag tag-jt">partner</span>':''}</div>
+          <div style="font-size:12px;color:var(--txt3);display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:2px">
+            ${acc?chipAcc(acc):''}${toAcc?`<span>→</span>${chipAcc(toAcc)}`:''}
+          </div>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:${t.type==='income'?'var(--green)':t.type==='transfer'?'var(--txt3)':t.type==='invest'?'var(--blue)':'var(--red)'};flex-shrink:0">${t.type==='income'?'+':t.type==='transfer'?'⇄':'-'}${fmt(t.amount)}</div>
+        <div style="font-size:12px;color:var(--txt3);min-width:32px;text-align:right;flex-shrink:0">${pad(new Date(t.date).getDate())}/${pad(new Date(t.date).getMonth()+1)}</div>
+        <button class="del" onclick="dTx(${t.id})">✕</button>
+      </div>`;
+    });
+    h+=`</div>`;
+    if(recThis.length>0){
+      const totRec=recThis.reduce((a,r)=>a+r.amount,0);
+      h+=`<div class="sec" style="border:2px solid var(--amber);margin-bottom:12px">
+        <div class="stitle" style="color:var(--amber)">⚡ Da registrare questo mese <span style="font-size:12px;font-weight:400;color:var(--amber-txt)">${fmt(totRec)} totali</span></div>`;
+      recThis.forEach(r=>{
+        const acc=accById(r.accountId);
+        const alreadyPaid=S.transactions.some(t=>t.accountId===r.accountId&&t.desc===r.name&&t.type==='expense'&&new Date(t.date).getFullYear()===S.viewYear&&new Date(t.date).getMonth()===S.viewMonth);
+        h+=`<div class="tx-row" style="background:${alreadyPaid?'var(--green-bg)':'var(--amber-bg)'}">
+          <div class="dot" style="background:${alreadyPaid?'var(--green)':'var(--amber)'}"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:600">${r.name}<span class="tag tag-rec">${RECURS.find(o=>o.v===r.recur)?.l}</span>${alreadyPaid?'<span class="tag" style="background:var(--green-bg);color:var(--green-txt)">✓ Registrato</span>':''}</div>
+            <div style="font-size:11px;color:var(--txt3)">Previsto il <strong>${r.day||1}</strong> del mese ${acc?'· '+acc.name:''} · ${r.category}</div>
+          </div>
+          <div style="font-size:14px;font-weight:700" class="cneg">-${fmt(r.amount)}</div>
+          ${alreadyPaid?'<span style="font-size:20px">✅</span>':`<button class="btn bok" style="font-size:12px;padding:6px 10px;min-height:36px" onclick="markPaid(${r.id})">✓ Registra</button>`}
+        </div>`;
+      });
+      h+=`</div>`;
+    }
+  }
+
+  // ── COINTESTATO ──
+  if(S.activeTab==='joint'){
+    if(jointAccs.length===0){h+=`<div class="empty" style="padding:50px">Nessun conto cointestato.<br>Aggiungilo dal tab <strong>Conti</strong> → tipo "Cointestato".</div>`;}
+    jointAccs.forEach(acc=>{
+      const bal=accBalance(acc.id);
+      const jtxs=S.transactions.filter(t=>t.accountId===acc.id||t.toAccountId===acc.id).sort((a,b)=>new Date(b.date)-new Date(a.date));
+      const sharedExp=jtxs.filter(t=>t.type==='expense'&&t.accountId===acc.id);
+      const totShared=sharedExp.reduce((s,t)=>s+t.amount,0);
+      const myContribs=jtxs.filter(t=>t.type==='transfer'&&t.toAccountId===acc.id).reduce((s,t)=>s+t.amount,0);
+      const partnerContribs=jtxs.filter(t=>t.isPartnerContrib).reduce((s,t)=>s+t.amount,0);
+      h+=`<div class="jt-header">
+        <div style="font-size:26px">👫</div>
+        <div style="flex:1"><div style="font-size:15px;font-weight:600;color:var(--pink-txt)">${acc.name}</div><div style="font-size:13px;color:var(--pink-txt);opacity:.8">Tu + ${acc.partnerName} · ${fmt(acc.myMonthly+acc.partnerMonthly)}/mese</div></div>
+        <div style="text-align:right"><div style="font-size:22px;font-weight:700;color:${bal>=0?'var(--green-txt)':'var(--red)'}">${fmt(bal)}</div><div style="font-size:11px;color:var(--pink-txt);opacity:.7">saldo</div></div>
+      </div>`;
+      h+=`<div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr))">
+        <div class="card"><div class="lbl">Spese comuni</div><div class="val cneg">${fmt(totShared)}</div></div>
+        <div class="card"><div class="lbl">La tua quota</div><div class="val cneg">${fmt(Math.round(totShared/2))}</div></div>
+        <div class="card"><div class="lbl">Hai versato</div><div class="val cpos">${fmt(myContribs)}</div></div>
+        <div class="card"><div class="lbl">Ha versato ${acc.partnerName}</div><div class="val cpink">${fmt(partnerContribs)}</div></div>
+      </div>`;
+      h+=`<div class="sec"><div class="stitle">Azioni rapide</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+        <button class="btn bpink" onclick="jtMio(${acc.id})">+ Mio versamento (${fmt(acc.myMonthly)})</button>
+        <button class="btn" style="border-color:var(--pink);color:var(--pink-txt);background:var(--pink-bg)" onclick="jtPartner(${acc.id})">+ ${acc.partnerName} (${fmt(acc.partnerMonthly)})</button>
+        <button class="btn bok" onclick="jtEntrambi(${acc.id})">+ Entrambi (${fmt(acc.myMonthly+acc.partnerMonthly)})</button>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px">Aggiungi spesa comune</div>
+      <div class="frow" style="grid-template-columns:1fr 1fr 1fr auto">
+        <div class="fg"><label>Descrizione</label><input type="text" id="jt-desc" placeholder="es. Cena fuori"/></div>
+        <div class="fg"><label>Categoria</label><select id="jt-cat">${CATS.expense.map(c=>`<option>${c}</option>`).join('')}</select></div>
+        <div class="fg"><label>Importo €</label><input type="number" id="jt-amt" placeholder="0" inputmode="decimal"/></div>
+        <div class="fg"><label>&nbsp;</label><button class="btn bdanger" onclick="addJtExp(${acc.id})">- Aggiungi</button></div>
+      </div></div>`;
+      h+=`<div class="sec"><div class="stitle">Storico conto</div>`;
+      if(jtxs.length===0)h+=`<div class="empty">Nessuna operazione</div>`;
+      jtxs.slice(0,20).forEach(t=>{
+        const isTr=t.type==='transfer'&&t.toAccountId===acc.id;
+        h+=`<div class="tx-row">
+          <div class="dot ${isTr||t.isPartnerContrib?'d-in':'d-jt'}"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:14px;font-weight:500">${t.desc}${isTr?'<span class="tag tag-jt">mio versamento</span>':''}${t.isPartnerContrib?`<span class="tag" style="background:var(--pink-bg);color:var(--pink-txt);border:1px solid var(--pink)">${acc.partnerName}</span>`:''}</div>
+            <div style="font-size:12px;color:var(--txt3)">${t.category}${t.type==='expense'?` · quota tua: ${fmt(Math.round(t.amount/2))}`:''}</div>
+          </div>
+          <div style="font-size:14px;font-weight:600;color:${t.type==='expense'?'var(--red)':'var(--green)'}"> ${t.type==='expense'?'-':'+'}${fmt(t.amount)}</div>
+          <div style="font-size:12px;color:var(--txt3);min-width:32px;text-align:right">${pad(new Date(t.date).getDate())}/${pad(new Date(t.date).getMonth()+1)}</div>
+          <button class="del" onclick="dTx(${t.id})">✕</button>
+        </div>`;
+      });
+      h+=`</div>`;
+    });
+  }
+
+  // ── TRASFERIMENTI ──
+  if(S.activeTab==='transfer'){
+    const transfers=S.transactions.filter(t=>t.type==='transfer').sort((a,b)=>new Date(b.date)-new Date(a.date));
+    h+=`<div class="sec"><div class="stitle">Nuovo trasferimento</div>
+    <div class="frow" style="grid-template-columns:1fr auto 1fr">
+      <div class="fg"><label>Da</label><select id="tr-from">${S.accounts.map(a=>`<option value="${a.id}" ${S.trForm.fromId===a.id?'selected':''}>${a.icon} ${a.name} (${fmt(accBalance(a.id))})</option>`).join('')}</select></div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:9px;color:var(--txt3);font-size:18px">→</div>
+      <div class="fg"><label>A</label><select id="tr-to">${S.accounts.map(a=>`<option value="${a.id}" ${S.trForm.toId===a.id?'selected':''}>${a.icon} ${a.name}</option>`).join('')}</select></div>
+    </div>
+    <div class="frow" style="grid-template-columns:1fr 1fr auto;margin-top:8px">
+      <div class="fg"><label>Importo €</label><input type="number" id="tr-amt" placeholder="0" inputmode="decimal" value="${S.trForm.amount}"/></div>
+      <div class="fg"><label>Descrizione</label><input type="text" id="tr-desc" value="${S.trForm.desc}"/></div>
+      <div class="fg"><label>&nbsp;</label><button class="btn binfo" onclick="addTransfer()">→ Trasferisci</button></div>
+    </div></div>`;
+    if(jointAccs.length>0){
+      h+=`<div class="sec"><div class="stitle">Versamenti cointestato rapidi</div><div style="display:flex;gap:8px;flex-wrap:wrap">`;
+      jointAccs.forEach(a=>{
+        const from=S.accounts.find(ac=>ac.type==='checking')||S.accounts[0];
+        h+=`<button class="btn bpink" onclick="quickTr(${from.id},${a.id},${a.myMonthly})">Mio versamento ${fmt(a.myMonthly)}</button>`;
+        h+=`<button class="btn bok" onclick="jtEntrambi(${a.id})">Entrambi ${fmt(a.myMonthly+a.partnerMonthly)}</button>`;
+      });
+      h+=`</div></div>`;
+    }
+    h+=`<div class="sec"><div class="stitle">Storico trasferimenti</div>`;
+    if(transfers.length===0)h+=`<div class="empty">Nessun trasferimento</div>`;
+    transfers.forEach(t=>{
+      const fa=accById(t.accountId),ta=accById(t.toAccountId);
+      h+=`<div class="tx-row"><div class="dot d-tr"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:500">${t.desc}</div>
+          <div style="font-size:12px;color:var(--txt3);display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:2px">${fa?chipAcc(fa):''}<span>→</span>${ta?chipAcc(ta):''}</div>
+        </div>
+        <div style="font-size:14px;font-weight:600" class="cinv">⇄ ${fmt(t.amount)}</div>
+        <div style="font-size:12px;color:var(--txt3);min-width:32px;text-align:right">${pad(new Date(t.date).getDate())}/${pad(new Date(t.date).getMonth()+1)}</div>
+        <button class="del" onclick="dTx(${t.id})">✕</button>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+
+
+  // ── PROIEZIONE ──
+  if(S.activeTab==='projection'){
+    const proj=buildProjection();
+    const avgInc=proj[0]?.avgInc||0;
+    h+=`<div class="sec" style="border:1px solid var(--blue)">
+      <div class="stitle" style="color:var(--blue-txt)">📌 Come funziona</div>
+      <p style="font-size:13px;color:var(--txt2);line-height:1.7">La previsione usa la <strong>media delle entrate degli ultimi 3 mesi</strong> (${fmt(avgInc)}/mese) e le <strong>spese programmate certe</strong> (affitto, bollette, ecc.) per stimare il saldo futuro. Non include spese variabili.</p>
+    </div>`;
+    proj.forEach((mo,idx)=>{
+      const ok=mo.projBal>=0;
+      const tight=mo.projBal>=0&&mo.projBal<500;
+      const color=ok?(tight?'var(--amber)':'var(--green)'):'var(--red)';
+      const bg=ok?(tight?'var(--amber-bg)':'var(--green-bg)'):'var(--red-bg)';
+      h+=`<div class="sec" style="border:2px solid ${color};margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+          <div>
+            <div style="font-size:17px;font-weight:700;color:var(--txt)">${mo.label}</div>
+            <div style="font-size:12px;color:var(--txt3)">tra ${idx+1} ${idx===0?'mese':'mesi'}</div>
+          </div>
+          <div style="text-align:right;background:${bg};border-radius:var(--r-md);padding:8px 14px">
+            <div style="font-size:11px;color:${color};text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Saldo previsto</div>
+            <div style="font-size:24px;font-weight:700;color:${color}">${fmt(mo.projBal)}</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px">
+          <div class="card"><div class="lbl">Entrate stimate</div><div class="val cpos">+${fmt(mo.avgInc)}</div></div>
+          <div class="card"><div class="lbl">Spese certe</div><div class="val cneg">-${fmt(mo.expectedExp)}</div></div>
+          <div class="card"><div class="lbl">Risparmio atteso</div><div class="val" style="color:${mo.expectedSav>0?'var(--green)':'var(--red)'}">${mo.expectedSav>0?'+':''}${fmt(mo.expectedSav)}</div></div>
+        </div>
+        ${mo.recs.length>0?`<div style="font-size:12px;color:var(--txt2);margin-bottom:6px;font-weight:600">Spese programmate in ${mo.label.split(' ')[0]}:</div>
+        ${mo.recs.map(r=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid var(--border)">
+          <span>${r.name} <span style="font-size:11px;color:var(--txt3)">${RECURS.find(o=>o.v===r.recur)?.l} · il ${r.day||1}</span></span>
+          <span class="cneg" style="font-weight:700">-${fmt(r.amount)}</span>
+        </div>`).join('')}`:'<div style="font-size:13px;color:var(--txt3)">Nessuna spesa programmata in questo mese</div>'}
+        ${!ok?`<div style="margin-top:10px;background:var(--red-bg);border-radius:var(--r-md);padding:8px 12px;font-size:13px;color:var(--red-txt)">⚠️ <strong>Attenzione:</strong> il saldo potrebbe andare in negativo. Considera di accantonare almeno ${fmt(Math.abs(mo.projBal))} nei mesi precedenti.</div>`:''}
+        ${tight?`<div style="margin-top:10px;background:var(--amber-bg);border-radius:var(--r-md);padding:8px 12px;font-size:13px;color:var(--amber-txt)">⚡ Saldo basso — meno di €500 di margine. Attenzione alle spese variabili.</div>`:''}
+      </div>`;
+    });
+  }
+
+  // ── GRAFICO ──
+  if(S.activeTab==='chart'){
+    const months=last12Months();
+    const totInc=months.reduce((a,m)=>a+m.inc,0);
+    const totExp=months.reduce((a,m)=>a+m.exp,0);
+    const totInv=months.reduce((a,m)=>a+m.inv,0);
+    const totBal=months.reduce((a,m)=>a+m.bal,0);
+    const bestM=months.reduce((a,m)=>m.bal>a.bal?m:a,months[0]);
+    h+=`<div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
+      <div class="card"><div class="lbl">Entrate 12 mesi</div><div class="val cpos">${fmt(totInc)}</div></div>
+      <div class="card"><div class="lbl">Uscite 12 mesi</div><div class="val cneg">${fmt(totExp)}</div></div>
+      <div class="card"><div class="lbl">Saldo cumulato</div><div class="val" style="color:${totBal>=0?'var(--green)':'var(--red)'}">${fmt(totBal)}</div></div>
+      <div class="card"><div class="lbl">Mese migliore</div><div class="val" style="font-size:14px">${MS[bestM.m]} <span class="cpos">${fmt(bestM.bal)}</span></div></div>
+    </div>
+    <div class="sec"><div class="stitle">Andamento ultimi 12 mesi</div>
+      <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+    </div>
+    <div class="sec"><div class="stitle">Dettaglio mensile</div>`;
+    months.slice().reverse().forEach(mo=>{
+      h+=`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
+        <div style="min-width:52px;font-size:13px;color:var(--txt2)">${mo.label}</div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+            <span class="cpos">+${fmt(mo.inc)}</span><span class="cneg">-${fmt(mo.exp)}</span>
+            <span style="font-weight:600;color:${mo.bal>=0?'var(--green)':'var(--red)'}">${mo.bal>=0?'+':''}${fmt(mo.bal)}</span>
+          </div>
+          <div class="pbar" style="height:5px;margin:0"><div class="pfill ${mo.bal>=0?'f-ok':'f-danger'}" style="width:${mo.inc>0?Math.min(100,Math.abs(mo.bal)/mo.inc*100):0}%"></div></div>
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+
+  // ── SIMULATORE ──
+  if(S.activeTab==='simulator'){
+    const res=compoundCalc(S.sim.monthly,S.sim.rate,S.sim.years);
+    const mult=(res.final/Math.max(1,res.invested)).toFixed(1);
+    h+=`<div class="sec"><div class="stitle">Simulatore interesse composto</div>
+    <div class="sim-row"><label>Investi ogni mese</label><input type="range" min="50" max="2000" step="50" value="${S.sim.monthly}" oninput="updSim('monthly',this.value);this.nextElementSibling.textContent='\u20ac'+parseInt(this.value).toLocaleString('it-IT')"/><span class="sim-val">${fmt(S.sim.monthly)}</span></div>
+    <div class="sim-row"><label>Rendimento annuo (%)</label><input type="range" min="1" max="15" step="0.5" value="${S.sim.rate}" oninput="updSim('rate',this.value);this.nextElementSibling.textContent=parseFloat(this.value)+'%'"/><span class="sim-val">${S.sim.rate}%</span></div>
+    <div class="sim-row"><label>Per quanti anni</label><input type="range" min="1" max="40" step="1" value="${S.sim.years}" oninput="updSim('years',this.value);this.nextElementSibling.textContent=parseInt(this.value)+' anni'"/><span class="sim-val">${S.sim.years} anni</span></div>
+    </div>
+    <div class="sim-result">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:16px">
+        <div><div style="font-size:12px;color:var(--txt3);margin-bottom:4px">Capitale finale</div><div style="font-size:26px;font-weight:700" class="cpos">${fmt(res.final)}</div></div>
+        <div><div style="font-size:12px;color:var(--txt3);margin-bottom:4px">Totale versato</div><div style="font-size:22px;font-weight:600" class="cinv">${fmt(res.invested)}</div></div>
+        <div><div style="font-size:12px;color:var(--txt3);margin-bottom:4px">Interessi guadagnati</div><div style="font-size:22px;font-weight:600" class="cpos">+${fmt(res.gain)}</div></div>
+        <div><div style="font-size:12px;color:var(--txt3);margin-bottom:4px">Moltiplicatore</div><div style="font-size:22px;font-weight:600" class="cwarn">×${mult}</div></div>
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;color:var(--txt2)">
+        ${fmt(S.sim.monthly)}/mese × ${S.sim.years} anni × ${S.sim.rate}% → <strong class="cpos">${fmt(res.final)}</strong> (${((res.gain/Math.max(1,res.invested))*100).toFixed(0)}% di guadagno)
+      </div>
+    </div>
+    <div class="sec"><div class="stitle">Proiezione anno per anno</div>
+      <div class="chart-wrap"><canvas id="sim-chart"></canvas></div>
+    </div>`;
+  }
+
+  // ── ALERT ──
+  if(S.activeTab==='alerts'){
+    h+=`<div style="display:flex;flex-direction:column;gap:8px">`;
+    if(alerts.length===0)h+=`<div class="empty" style="padding:50px">✅ Tutto ok, nessun alert!</div>`;
+    alerts.forEach(a=>{h+=`<div class="abox ${a.type}"><strong>${a.icon} ${a.title}</strong><br>${a.text}</div>`;});
+    h+=`</div>`;
+    if(plans.length>0){
+      h+=`<div class="sec" style="margin-top:12px"><div class="stitle">Cuscinetti per spese future</div>`;
+      plans.slice(0,5).forEach(p=>{
+        const pct=Math.min(100,((p.saved||0)/p.amount)*100);
+        const fc=pct>=100?'f-ok':pct>=50?'f-warn':'f-danger';
+        const acc=accById(p.accountId);
+        h+=`<div class="saving-plan">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px">
+            <span><strong>${p.name}</strong> <span class="cinv" style="font-size:12px">${MS[p.fm]} ${p.fy}</span> <span class="cmut" style="font-size:12px">tra ${p.away} ${p.away===1?'mese':'mesi'}</span></span>
+            <span style="font-size:13px">serve <strong class="cinv">${fmt(p.needed)}/mese</strong></span>
+          </div>
+          ${acc?`<div style="margin-bottom:6px">${chipAcc(acc)}</div>`:''}
+          <div style="display:flex;gap:14px;font-size:13px;margin-bottom:6px;flex-wrap:wrap">
+            <span>Target: <strong>${fmt(p.amount)}</strong></span><span>Accantonato: <strong>${fmt(p.saved||0)}</strong></span><span>Manca: <strong class="cneg">${fmt(Math.max(0,p.amount-(p.saved||0)))}</strong></span>
+          </div>
+          <div class="pbar"><div class="pfill ${fc}" style="width:${pct}%"></div></div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input type="number" id="sp-${p.id}" placeholder="Accantona €" style="max-width:120px" inputmode="decimal"/>
+            <button class="btn bwarn" onclick="addSav(${p.id})">+ Accantona</button>
+          </div>
+        </div>`;
+      });
+      h+=`</div>`;
+    }
+  }
+
+  // ── OBIETTIVI ──
+  if(S.activeTab==='goals'){
+    h+=`<div class="sec"><div class="stitle">Nuovo obiettivo</div>
+    <div class="frow" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="fg"><label>Nome</label><input type="text" id="gn" placeholder="es. Fondo emergenza" value="${S.goalForm.name}"/></div>
+      <div class="fg"><label>Tipo</label><select id="gt">${GOAL_TYPES.map(t=>`<option value="${t.v}" ${S.goalForm.type===t.v?'selected':''}>${t.l}</option>`).join('')}</select></div>
+      <div class="fg"><label>Target €</label><input type="number" id="ga" placeholder="es. 3500" inputmode="decimal" value="${S.goalForm.target}"/></div>
+    </div>
+    <div class="frow" style="grid-template-columns:1fr 1fr 1fr auto;margin-top:8px">
+      <div class="fg"><label>Conto</label><select id="g-acc">${S.accounts.map(a=>`<option value="${a.id}" ${S.goalForm.accountId===a.id?'selected':''}>${a.icon} ${a.name}</option>`).join('')}</select></div>
+      <div class="fg"><label>Scadenza</label><input type="date" id="gd" value="${S.goalForm.deadline}"/></div>
+      <div class="fg"><label>Note</label><input type="text" id="gno" placeholder="opzionale" value="${S.goalForm.notes}"/></div>
+      <div class="fg"><label>&nbsp;</label><button class="btn bok" onclick="addGoal()">+ Crea</button></div>
+    </div></div>`;
+    if(S.goals.length===0)h+=`<div class="empty" style="padding:50px">Nessun obiettivo. Creane uno!</div>`;
+    S.goals.forEach(g=>{
+      const pct=Math.min(100,(g.saved/g.target)*100);
+      const ml=monthsLeft(g.deadline);const dl=daysLeft(g.deadline);
+      const rem=g.target-g.saved;const mNeed=ml>0?Math.ceil(rem/ml):rem;
+      const isDone=g.saved>=g.target;const isUrg=!isDone&&dl<=30&&dl>0;const isOvd=!isDone&&dl<0;
+      const fc=isDone?'f-ok':pct>=66?'f-ok':pct>=33?'f-warn':'f-danger';
+      const gt=GOAL_TYPES.find(t=>t.v===g.type)||GOAL_TYPES[0];
+      const acc=accById(g.accountId);
+      const gtColor={save:'green',invest:'blue',buy:'amber',debt:'red'}[g.type]||'blue';
+      h+=`<div class="goal-card ${isDone?'done':isUrg||isOvd?'urgent':''}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:15px;font-weight:600">${isDone?'✅ ':isUrg?'🚨 ':isOvd?'⌛ ':''}${g.name}</div>
+            <div style="display:flex;gap:6px;align-items:center;margin-top:5px;flex-wrap:wrap">
+              <span style="font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600;background:var(--${gtColor}-bg);color:var(--${gtColor}-txt)">${gt.l}</span>
+              ${acc?chipAcc(acc):''}
+              <span style="font-size:12px;color:var(--txt3)">${isOvd?'Scaduto':'Entro'} ${new Date(g.deadline).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'})}</span>
+              ${g.notes?`<span style="font-size:12px;color:var(--txt3)">${g.notes}</span>`:''}
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:24px;font-weight:700;color:${isDone?'var(--green)':isUrg||isOvd?'var(--red)':'var(--txt)'}">${pct.toFixed(0)}%</div>
+            <div style="font-size:11px;color:var(--txt3)">${isDone?'completato':`${ml} mesi`}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin-bottom:6px">
+          <span>Raggiunto: <strong class="cpos">${fmt(g.saved)}</strong></span>
+          <span>Target: <strong>${fmt(g.target)}</strong></span>
+          <span>Manca: <strong class="${isDone?'cpos':'cneg'}">${fmt(Math.max(0,rem))}</strong></span>
+          ${!isDone&&ml>0?`<span>Serve: <strong class="cinv">${fmt(mNeed)}/mese</strong></span>`:''}
+        </div>
+        <div class="pbar"><div class="pfill ${fc}" style="width:${pct}%"></div></div>
+        ${!isDone?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:end">
+          <input type="number" id="gd-${g.id}" placeholder="Deposita €" style="max-width:110px" inputmode="decimal"/>
+          <button class="btn binfo" onclick="depGoal(${g.id})">+ Deposita</button>
+          ${ml>0?`<button class="btn" style="font-size:12px" onclick="depGoalM(${g.id},${mNeed})">+ ${fmt(mNeed)}/mese</button>`:''}
+          <button class="del" style="margin-left:auto;opacity:.35" onclick="dGoal(${g.id})">✕</button>
+        </div>`:`<div style="margin-top:8px;font-size:13px" class="cpos">🎉 Completato! <button class="del" style="opacity:.35;margin-left:8px" onclick="dGoal(${g.id})">✕ Rimuovi</button></div>`}
+      </div>`;
+    });
+    if(S.goals.length>0){
+      const tT=S.goals.reduce((a,g)=>a+g.target,0);const tS=S.goals.reduce((a,g)=>a+g.saved,0);
+      const tM=S.goals.filter(g=>g.saved<g.target&&monthsLeft(g.deadline)>0).reduce((a,g)=>{const ml=monthsLeft(g.deadline);return a+(ml>0?Math.ceil((g.target-g.saved)/ml):0)},0);
+      h+=`<div class="sec"><div class="stitle">Riepilogo obiettivi</div>
+      <div class="cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="card"><div class="lbl">Target totale</div><div class="val">${fmt(tT)}</div></div>
+        <div class="card"><div class="lbl">Raggiunto</div><div class="val cpos">${fmt(tS)}</div></div>
+        <div class="card"><div class="lbl">Serve/mese</div><div class="val cwarn">${fmt(tM)}</div></div>
+      </div></div>`;
+    }
+  }
+
+  // ── PROGRAMMATO ──
+  if(S.activeTab==='calendar'){
+    h+=`<div class="sec"><div class="stitle">Aggiungi spesa programmata</div>
+    <div class="frow" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="fg"><label>Nome</label><input type="text" id="rn" placeholder="es. Assicurazione" value="${S.recForm.name}"/></div>
+      <div class="fg"><label>Importo €</label><input type="number" id="ra" placeholder="0" inputmode="decimal" value="${S.recForm.amount}"/></div>
+      <div class="fg"><label>Giorno del mese</label><select id="rd">${Array.from({length:31},(_,i)=>`<option value="${i+1}" ${(S.recForm.day||1)===i+1?'selected':''}>${i+1}</option>`).join('')}</select></div>
+      <div class="fg"><label>Giorno del mese</label><select id="rd">${Array.from({length:31},(_,i)=>`<option value="${i+1}" ${(S.recForm.day||1)===i+1?'selected':''}>${i+1}</option>`).join('')}</select></div>
+      <div class="fg"><label>Mese base</label><select id="rm">${MO.map((m,i)=>`<option value="${i}" ${S.recForm.month===i?'selected':''}>${m}</option>`).join('')}</select></div>
+    </div>
+    <div class="frow" style="grid-template-columns:1fr 1fr 1fr auto;margin-top:8px">
+      <div class="fg"><label>Ricorrenza</label><select id="rr">${RECURS.map(o=>`<option value="${o.v}" ${S.recForm.recur===o.v?'selected':''}>${o.l}</option>`).join('')}</select></div>
+      <div class="fg"><label>Categoria</label><select id="rc">${CATS.expense.map(c=>`<option ${S.recForm.category===c?'selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="fg"><label>Conto</label><select id="r-acc">${S.accounts.map(a=>`<option value="${a.id}" ${S.recForm.accountId===a.id?'selected':''}>${a.icon} ${a.name}</option>`).join('')}</select></div>
+      <div class="fg"><label>&nbsp;</label><button class="btn bok" onclick="addRec()">+ Aggiungi</button></div>
+    </div></div>`;
+    const calData=[];
+    for(let i=0;i<12;i++){const d=new Date(now.getFullYear(),now.getMonth()+i,1);calData.push({y:d.getFullYear(),m:d.getMonth(),recs:getRecurForMonth(d.getFullYear(),d.getMonth()),isCur:d.getFullYear()===S.viewYear&&d.getMonth()===S.viewMonth})}
+    h+=`<div class="sec"><div class="stitle">Calendario prossimi 12 mesi</div>`;
+    calData.forEach(mo=>{
+      if(!mo.isCur&&mo.recs.length===0)return;
+      const tot=mo.recs.reduce((a,r)=>a+r.amount,0);
+      const cls=tot>1000?'mb-warn':tot>200?'mb-info':'mb-neu';
+      h+=`<div class="cal-row" style="${mo.isCur?'border-color:var(--blue);':''}" >
+        <div class="mbadge ${cls}"><span style="font-size:13px;font-weight:600">${MS[mo.m]}</span><span style="font-size:10px">${mo.y}</span></div>
+        <div style="flex:1">${mo.recs.length===0?`<span style="font-size:13px;color:var(--txt3)">Nessuna spesa</span>`:
+          mo.recs.map(r=>{const a=accById(r.accountId);return`<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;gap:8px">
+            <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name} <span style="font-size:11px;color:var(--txt3)">${RECURS.find(o=>o.v===r.recur)?.l}</span></span>
+            <span class="cneg" style="font-weight:600;flex-shrink:0">-${fmt(r.amount)}</span>
+          </div>`}).join('')}
+        </div>
+        ${tot>0?`<div style="text-align:right;border-left:1px solid var(--border);padding-left:12px;min-width:66px;flex-shrink:0"><div style="font-size:11px;color:var(--txt3)">tot.</div><div class="cneg" style="font-size:15px;font-weight:600">${fmt(tot)}</div></div>`:''}
+      </div>`;
+    });
+    h+=`</div><div class="sec"><div class="stitle">Spese registrate</div>`;
+    if(S.recurring.length===0)h+=`<div class="empty">Nessuna spesa programmata</div>`;
+    S.recurring.forEach(r=>{const acc=accById(r.accountId);h+=`<div class="tx-row"><div class="dot d-rec"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:500">${r.name}<span class="tag tag-rec">${RECURS.find(o=>o.v===r.recur)?.l}</span></div>
+      <div style="font-size:12px;color:var(--txt3)">${acc?chipAcc(acc):''} ${r.category} · ${r.recur==='monthly'?`ogni mese il ${r.day||1}`:`${MO[r.month]} il ${r.day||1}`}</div></div>
+      <div style="font-size:14px;font-weight:600" class="cneg">-${fmt(r.amount)}</div>
+      <button class="del" onclick="dRec(${r.id})">✕</button>
+    </div>`;});
+    h+=`</div>`;
+  }
+
+  // ── INVESTIMENTI ──
+  if(S.activeTab==='investments'){
+    const tV=S.investments.reduce((a,i)=>a+i.currentValue,0);const tI=S.investments.reduce((a,i)=>a+i.invested,0);const tG=tV-tI;const tP=tI>0?((tG/tI)*100).toFixed(1):'0.0';
+    h+=`<div class="cards" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+      <div class="card"><div class="lbl">Valore portafoglio</div><div class="val cinv">${fmt(tV)}</div></div>
+      <div class="card"><div class="lbl">Totale investito</div><div class="val">${fmt(tI)}</div></div>
+      <div class="card"><div class="lbl">Guadagno totale</div><div class="val" style="color:${tG>=0?'var(--green)':'var(--red)'}">${tG>=0?'+':''}${fmt(tG)} (${tG>=0?'+':''}${tP}%)</div></div>
+    </div>`;
+    if(S.investments.length===0)h+=`<div class="empty" style="padding:40px">Nessun investimento</div>`;
+    S.investments.forEach(inv=>{
+      const p=inv.invested>0?((inv.currentValue-inv.invested)/inv.invested*100).toFixed(1):'0.0';
+      const tD=inv.dividends.reduce((a,d)=>a+d.amount,0);const acc=accById(inv.accountId);
+      h+=`<div class="inv-card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:15px;font-weight:600">${inv.name}</span>
+            ${acc?chipAcc(acc):''}
+          </div>
+          <div style="display:flex;gap:6px">
+            ${tD>0?`<span style="font-size:12px;background:var(--amber-bg);color:var(--amber-txt);border:1px solid var(--amber);padding:2px 9px;border-radius:20px;font-weight:500">div +${fmt(tD)}</span>`:''}
+            <span style="font-size:12px;padding:2px 9px;border-radius:20px;font-weight:600;${parseFloat(p)>=0?'background:var(--green-bg);color:var(--green-txt);border:1px solid var(--green)':'background:var(--red-bg);color:var(--red-txt);border:1px solid var(--red)'}">${parseFloat(p)>=0?'+':''}${p}%</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin-bottom:10px">
+          <span>Versato: <strong>${fmt(inv.invested)}</strong></span>
+          <span>Valore: <strong>${fmt(inv.currentValue)}</strong></span>
+          <span>Mensile: <strong>${fmt(inv.monthlyAmount)}</strong></span>
+          <span>Gain: <strong style="color:${parseFloat(p)>=0?'var(--green)':'var(--red)'}">${parseFloat(p)>=0?'+':''}${fmt(inv.currentValue-inv.invested)}</strong></span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:end">
+          ${S.editInvId===inv.id?`<input type="number" id="eiv-${inv.id}" value="${S.editInvVal}" placeholder="Nuovo valore €" style="max-width:130px" inputmode="decimal"/>
+            <button class="btn bok" onclick="sInv(${inv.id})">Salva</button>
+            <button class="btn" onclick="S.editInvId=null;render()">Annulla</button>`
+          :`<button class="btn" onclick="S.editInvId=${inv.id};S.editInvVal=${inv.currentValue};render()">✏ Aggiorna valore</button>`}
+          ${S.editDivId===inv.id?`<input type="number" id="div-${inv.id}" value="${S.divAmt}" placeholder="Dividendo €" style="max-width:110px" inputmode="decimal"/>
+            <button class="btn bok" onclick="sDv(${inv.id})">+ Dividendo</button>
+            <button class="btn" onclick="S.editDivId=null;render()">Annulla</button>`
+          :`<button class="btn" onclick="S.editDivId=${inv.id};S.divAmt='';render()">+ Dividendo</button>`}
+          <button class="btn" onclick="addCtr(${inv.id})">+ Contributo (${fmt(inv.monthlyAmount)})</button>
+          <button class="del" style="margin-left:auto;opacity:.35" onclick="dInv(${inv.id})">✕</button>
+        </div>
+      </div>`;
+    });
+    h+=`<div class="sec"><div class="stitle">Nuovo investimento</div>
+    <div class="frow" style="grid-template-columns:1fr 1fr 1fr 1fr auto">
+      <div class="fg"><label>Nome</label><input type="text" id="in" placeholder="es. ETF World" value="${S.invForm.name}"/></div>
+      <div class="fg"><label>Versato €</label><input type="number" id="iv" placeholder="0" inputmode="decimal" value="${S.invForm.val}"/></div>
+      <div class="fg"><label>Mensile €</label><input type="number" id="im" placeholder="0" inputmode="decimal" value="${S.invForm.monthly}"/></div>
+      <div class="fg"><label>Conto</label><select id="i-acc">${S.accounts.map(a=>`<option value="${a.id}" ${S.invForm.accountId===a.id?'selected':''}>${a.icon} ${a.name}</option>`).join('')}</select></div>
+      <div class="fg"><label>&nbsp;</label><button class="btn bok" onclick="addInv()">+ Crea</button></div>
+    </div></div>`;
+  }
+
+  // ── CONTI ──
+  if(S.activeTab==='accounts'){
+    const isJ=S.accForm.type==='joint';
+    h+=`<div class="sec"><div class="stitle">Aggiungi conto</div>
+    <div class="frow" style="grid-template-columns:1fr 1fr 1fr 1fr auto">
+      <div class="fg"><label>Nome</label><input type="text" id="an" placeholder="es. Conto BancoPosta" value="${S.accForm.name}"/></div>
+      <div class="fg"><label>Tipo</label><select id="at" onchange="chAT()">${ACC_TYPES.map(t=>`<option value="${t.v}" ${S.accForm.type===t.v?'selected':''}>${t.icon} ${t.l}</option>`).join('')}</select></div>
+      <div class="fg"><label>Saldo iniziale €</label><input type="number" id="ab" placeholder="0" inputmode="decimal" value="${S.accForm.initialBalance}"/></div>
+      <div class="fg"><label>Note</label><input type="text" id="ano" placeholder="opzionale" value="${S.accForm.note}"/></div>
+      <div class="fg"><label>&nbsp;</label><button class="btn bok" onclick="addAcc()">+ Crea</button></div>
+    </div>
+    ${isJ?`<div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px">
+      <div style="font-size:13px;color:var(--pink-txt);margin-bottom:10px;font-weight:600">👫 Impostazioni cointestato</div>
+      <div class="frow" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="fg"><label>Nome partner</label><input type="text" id="a-partner" placeholder="es. Sara" value="${S.accForm.partnerName}"/></div>
+        <div class="fg"><label>Mio versamento mensile €</label><input type="number" id="a-my" placeholder="200" inputmode="decimal" value="${S.accForm.myMonthly}"/></div>
+        <div class="fg"><label>Versamento partner €</label><input type="number" id="a-par" placeholder="200" inputmode="decimal" value="${S.accForm.partnerMonthly}"/></div>
+      </div>
+    </div>`:''}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">`;
+    const COLORS=['info','success','warning','danger','pink','secondary'];
+    S.accounts.forEach(acc=>{
+      const bal=accBalance(acc.id);const tc=S.transactions.filter(t=>t.accountId===acc.id||t.toAccountId===acc.id).length;
+      const at=ACC_TYPES.find(t=>t.v===acc.type)||ACC_TYPES[0];
+      h+=`<div class="acc-card ${acc.isJoint?'joint-card':''}">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:20px;background:${accColor(acc)};flex-shrink:0">${acc.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:15px;font-weight:600">${acc.name}</div>
+            <div style="font-size:12px;color:var(--txt3)">${at.l}${acc.note?` · ${acc.note}`:''}${acc.isJoint?` · con ${acc.partnerName} · ${fmt(acc.myMonthly+acc.partnerMonthly)}/mese`:''}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-size:20px;font-weight:700;color:${bal>=0?'var(--txt)':'var(--red)'}">${fmt(bal)}</div>
+            <div style="font-size:11px;color:var(--txt3)">${tc} movimenti</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;align-items:center">
+          <span style="font-size:12px;color:var(--txt3)">Colore:</span>
+          ${COLORS.map(c=>`<button onclick="setAccC(${acc.id},'${c}')" style="width:22px;height:22px;border-radius:50%;background:var(--${c==='secondary'?'bg3':c+'-bg'});border:${acc.color===c?'2.5px solid var(--txt)':'1px solid var(--border2)'};cursor:pointer"></button>`).join('')}
+          <span style="font-size:12px;color:var(--txt3);margin-left:6px">Icona:</span>
+          ${['🏦','🏧','📈','💵','💳','🔐','🪙','👫','🗂️'].map(i=>`<button onclick="setAccI(${acc.id},'${i}')" style="background:none;border:${acc.icon===i?'1.5px solid var(--txt)':'1px solid var(--border)'};border-radius:6px;padding:3px 5px;cursor:pointer;font-size:15px">${i}</button>`).join('')}
+          <button class="del" style="margin-left:auto;opacity:.35" onclick="dAcc(${acc.id})">✕ Elimina</button>
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+
+
+  // ── IMPOSTAZIONI ──
+  if(S.activeTab==='settings'){
+    const T=S.settings?.tabs||{};
+    const ar=S.settings?.autoRegister!==false;
+    const tabDefs=[
+      {k:'overview',   icon:'🏠', lbl:'Home', desc:'Panoramica conti e alert rapidi', locked:true},
+      {k:'movements',  icon:'📋', lbl:'Movimenti', desc:'Aggiungi e vedi entrate/uscite', locked:true},
+      {k:'accounts',   icon:'🏦', lbl:'Conti', desc:'Gestione conti bancari', locked:true},
+      {k:'joint',      icon:'👫', lbl:'Cointestato', desc:'Conto condiviso con partner'},
+      {k:'transfer',   icon:'⇄',  lbl:'Trasferimenti', desc:'Sposta soldi tra conti'},
+      {k:'projection', icon:'🔮', lbl:'Previsione', desc:'Saldo previsto prossimi 3 mesi'},
+      {k:'chart',      icon:'📊', lbl:'Grafico', desc:'Andamento ultimi 12 mesi'},
+      {k:'simulator',  icon:'🧮', lbl:'Simulatore', desc:'Calcola interesse composto'},
+      {k:'alerts',     icon:'🔔', lbl:'Alert', desc:'Notifiche e piano di risparmio'},
+      {k:'goals',      icon:'🎯', lbl:'Obiettivi', desc:'Traguardi finanziari con scadenza'},
+      {k:'calendar',   icon:'📅', lbl:'Programmato', desc:'Spese ricorrenti e calendario'},
+      {k:'investments',icon:'📈', lbl:'Investimenti', desc:'ETF, azioni e dividendi'},
+    ];
+    h+=`<div class="sec">
+      <div class="stitle">Registrazione automatica spese ricorrenti</div>
+      <div class="tx-row" style="background:${ar?'var(--green-bg)':'var(--bg2)'}">
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600">Registra automaticamente</div>
+          <div style="font-size:12px;color:var(--txt3)">${ar?'Le spese programmate vengono aggiunte automaticamente ogni mese':'Le spese programmate vanno confermate manualmente con ✓ Registra'}</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:48px;height:26px;flex-shrink:0">
+          <input type="checkbox" ${ar?'checked':''} onchange="toggleAutoReg(this.checked)" style="opacity:0;width:0;height:0"/>
+          <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${ar?'var(--green)':'var(--border2)'};border-radius:26px;transition:.3s">
+            <span style="position:absolute;content:'';height:20px;width:20px;left:${ar?'24px':'3px'};bottom:3px;background:#fff;border-radius:50%;transition:.3s;display:block"></span>
+          </span>
+        </label>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="stitle">Sezioni attive</div>
+      <div style="font-size:12px;color:var(--txt3);margin-bottom:12px">Disattiva le sezioni che non usi per semplificare la navigazione. Le sezioni bloccate (🔒) sono sempre visibili.</div>
+      ${tabDefs.map(t=>{
+        const on=t.locked||T[t.k]!==false;
+        return `<div class="tx-row" style="background:${on?'var(--bg)':'var(--bg2)'}">
+          <div style="font-size:20px;flex-shrink:0">${t.icon}</div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:600;color:${on?'var(--txt)':'var(--txt3)'}">${t.lbl} ${t.locked?'🔒':''}</div>
+            <div style="font-size:12px;color:var(--txt3)">${t.desc}</div>
+          </div>
+          <label style="position:relative;display:inline-block;width:48px;height:26px;flex-shrink:0;${t.locked?'opacity:.4;pointer-events:none':''}">
+            <input type="checkbox" ${on?'checked':''} ${t.locked?'disabled':''} onchange="toggleTab('${t.k}',this.checked)" style="opacity:0;width:0;height:0"/>
+            <span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:${on?'var(--green)':'var(--border2)'};border-radius:26px;transition:.3s">
+              <span style="position:absolute;height:20px;width:20px;left:${on?'24px':'3px'};bottom:3px;background:#fff;border-radius:50%;transition:.3s;display:block"></span>
+            </span>
+          </label>
+        </div>`;
+      }).join('')}
+    </div>`;
+    // Backup e Reset
+    h+=`<div class="sec"><div class="stit">Backup dati</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn binfo" onclick="exportData()">📤 Esporta JSON</button>
+        <button class="btn" onclick="importData()">📥 Importa JSON</button>
+      </div></div>`;
+    h+=`<div class="sec" style="border:1px solid var(--red)">
+      <div class="stit" style="color:var(--red)">⚠️ Zona pericolosa</div>
+      <div class="tx-row" style="background:var(--red-bg)">
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600">Reset completo</div>
+          <div style="font-size:12px;color:var(--txt3)">Cancella tutti i dati: conti, movimenti, obiettivi, investimenti.<br>Operazione irreversibile — esporta prima il JSON!</div>
+        </div>
+        <button class="btn" style="background:var(--red-bg);border-color:var(--red);color:var(--red-txt);margin-left:10px" onclick="resetAll()">🗑️ Reset</button>
+      </div></div>`;
+  }
+
+  document.getElementById('app').innerHTML=h;
+  if(S.activeTab==='chart')requestAnimationFrame(drawTrendChart);
+  if(S.activeTab==='simulator'){const r=compoundCalc(S.sim.monthly,S.sim.rate,S.sim.years);requestAnimationFrame(()=>drawSimChart(r.data));}
+}
+
+// ── AZIONI ──
+
+function toggleTab(k,v){
+  if(!S.settings)S.settings={tabs:{},autoRegister:true};
+  if(!S.settings.tabs)S.settings.tabs={};
+  S.settings.tabs[k]=v;
+  if(!v&&S.activeTab===k)S.activeTab='overview';
+  saveData();render()
+}
+function toggleAutoReg(v){
+  if(!S.settings)S.settings={tabs:{},autoRegister:true};
+  S.settings.autoRegister=v;
+  saveData();render()
+}
+function resetAll(){
+  if(!confirm('Sei sicuro? Verranno cancellati TUTTI i dati. Operazione irreversibile.'))return;
+  if(!confirm('Ultima conferma: hai esportato il backup JSON?'))return;
+  var keys=['pfv4','portafoglio_v5_clean','portafoglio_pwa_v1','portafoglio_pwa_v2'];
+  keys.forEach(function(k){try{localStorage.removeItem(k);}catch(ex){}});
+  try{localStorage.clear();}catch(ex){}
+  S=JSON.parse(JSON.stringify(DEF));
+  S.txForm_type='income';
+  S.txForm_accId=null;
+  S._accType=null;
+  S._editInv=null;
+  S._editDiv=null;
+  persist();
+  render();
+  alert('Reset completato! App svuotata.');
+}
+function sT(t){S.activeTab=t;render()}
+function pM(){if(S.viewMonth===0){S.viewMonth=11;S.viewYear--}else S.viewMonth--;render()}
+function nM(){if(S.viewMonth===11){S.viewMonth=0;S.viewYear++}else S.viewMonth++;render()}
+function cT(){S.txForm.type=document.getElementById('ft').value;S.txForm.category=CATS[S.txForm.type][0];render()}
+function setFlt(v){S.filterAccount=v;render()}
+function goAcc(id){S.filterAccount=id;S.activeTab='movements';render()}
+function chAT(){const t=document.getElementById('at').value;S.accForm.type=t;S.accForm.isJoint=(t==='joint');render()}
+
+function updSim(k,v){S.sim[k]=parseFloat(v);const r=compoundCalc(S.sim.monthly,S.sim.rate,S.sim.years);if(simChartInst){simChartInst.data.datasets[0].data=r.data.map(d=>d.inv);simChartInst.data.datasets[1].data=r.data.map(d=>d.v);simChartInst.update('none');}saveData()}
+
+function addTx(){
+  const accId=parseInt(document.getElementById('f-acc').value);
+  const type=document.getElementById('ft').value,cat=document.getElementById('fc').value,desc=document.getElementById('fd').value,amt=parseFloat(document.getElementById('fa').value);
+  if(!amt||amt<=0){alert('Inserisci un importo valido');return}
+  const d=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  S.transactions.push({id:S.nextId++,date:d,type,category:cat,desc:desc||cat,amount:amt,accountId:accId});
+  if(type==='invest'){const ex=S.investments.find(i=>i.name.toLowerCase()===(desc||cat).toLowerCase());if(ex){ex.invested+=amt;ex.currentValue+=amt}}
+  S.txForm={...S.txForm,desc:'',amount:''};saveData();render()
+}
+function dTx(id){if(!confirm('Eliminare questo movimento?'))return;S.transactions=S.transactions.filter(t=>t.id!==id);saveData();render()}
+
+function addTransfer(){
+  const fromId=parseInt(document.getElementById('tr-from').value),toId=parseInt(document.getElementById('tr-to').value),amt=parseFloat(document.getElementById('tr-amt').value),desc=document.getElementById('tr-desc').value;
+  if(!amt||amt<=0||fromId===toId){alert('Controlla i dati');return}
+  const d=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  S.transactions.push({id:S.nextId++,date:d,type:'transfer',category:'Trasferimento',desc:desc||'Trasferimento',amount:amt,accountId:fromId,toAccountId:toId});
+  S.trForm={...S.trForm,amount:''};saveData();render()
+}
+function quickTr(f,t,a){
+  const d=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  S.transactions.push({id:S.nextId++,date:d,type:'transfer',category:'Trasferimento',desc:`Versamento cointestato ${fmt(a)}`,amount:a,accountId:f,toAccountId:t});
+  saveData();render()
+}
+function jtMio(accId){
+  const acc=S.accounts.find(a=>a.id===accId);if(!acc)return;
+  const from=S.accounts.find(a=>a.type==='checking')||S.accounts[0];
+  S.transactions.push({id:S.nextId++,date:`${S.viewYear}-${pad(S.viewMonth+1)}-01`,type:'transfer',category:'Trasferimento',desc:`Mio versamento → ${acc.name}`,amount:acc.myMonthly,accountId:from.id,toAccountId:accId});
+  saveData();render()
+}
+function jtPartner(accId){
+  const acc=S.accounts.find(a=>a.id===accId);if(!acc)return;
+  S.transactions.push({id:S.nextId++,date:`${S.viewYear}-${pad(S.viewMonth+1)}-01`,type:'income',category:'Altro',desc:`Versamento ${acc.partnerName}`,amount:acc.partnerMonthly,accountId:accId,isPartnerContrib:true});
+  saveData();render()
+}
+function jtEntrambi(accId){jtMio(accId);setTimeout(()=>{jtPartner(accId)},30)}
+function addJtExp(accId){
+  const desc=document.getElementById('jt-desc').value,cat=document.getElementById('jt-cat').value,amt=parseFloat(document.getElementById('jt-amt').value);
+  if(!amt||amt<=0)return;
+  S.transactions.push({id:S.nextId++,date:`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`,type:'expense',category:cat,desc:desc||cat,amount:amt,accountId:accId});
+  saveData();render()
+}
+function markPaid(id){
+  const r=S.recurring.find(r=>r.id===id);if(!r)return;
+  const day=r.day||1;
+  S.transactions.push({id:S.nextId++,date:`${S.viewYear}-${pad(S.viewMonth+1)}-${pad(day)}`,type:'expense',category:r.category,desc:r.name,amount:r.amount,accountId:r.accountId||S.accounts[0]?.id});
+  saveData();render()
+}
+function addSav(id){const r=S.recurring.find(r=>r.id===id);if(!r)return;const v=parseFloat(document.getElementById('sp-'+id)?.value);if(!v||v<=0)return;r.saved=(r.saved||0)+v;saveData();render()}
+function addRec(){
+  const name=document.getElementById('rn').value,amt=parseFloat(document.getElementById('ra').value),day=parseInt(document.getElementById('rd')?.value)||1,month=parseInt(document.getElementById('rm').value),recur=document.getElementById('rr').value,cat=document.getElementById('rc').value,accId=parseInt(document.getElementById('r-acc').value);
+  if(!name||!amt||amt<=0){alert('Compila nome e importo');return}
+  S.recurring.push({id:S.nextId++,name,amount:amt,day,month,recur,category:cat,saved:0,accountId:accId});
+  S.recForm={name:'',amount:'',day:1,month:now.getMonth(),recur:'yearly',category:'Trasporti',accountId:S.accounts[0]?.id||1};
+  saveData();render()
+}
+function dRec(id){if(!confirm('Eliminare questa spesa programmata?'))return;S.recurring=S.recurring.filter(r=>r.id!==id);saveData();render()}
+function addGoal(){
+  const name=document.getElementById('gn').value,type=document.getElementById('gt').value,target=parseFloat(document.getElementById('ga').value),deadline=document.getElementById('gd').value,notes=document.getElementById('gno').value,accId=parseInt(document.getElementById('g-acc').value);
+  if(!name||!target||target<=0||!deadline){alert('Compila tutti i campi');return}
+  S.goals.push({id:S.nextId++,name,type,target,saved:0,deadline,notes,accountId:accId});
+  S.goalForm={name:'',type:'save',target:'',deadline:`${now.getFullYear()+1}-${pad(now.getMonth()+1)}-01`,notes:'',accountId:S.accounts[0]?.id||1};
+  saveData();render()
+}
+function depGoal(id){const g=S.goals.find(g=>g.id===id);if(!g)return;const v=parseFloat(document.getElementById('gd-'+id)?.value);if(!v||v<=0)return;g.saved=Math.min(g.target,g.saved+v);saveData();render()}
+function depGoalM(id,m){const g=S.goals.find(g=>g.id===id);if(!g)return;g.saved=Math.min(g.target,g.saved+m);saveData();render()}
+function dGoal(id){if(!confirm('Eliminare questo obiettivo?'))return;S.goals=S.goals.filter(g=>g.id!==id);saveData();render()}
+function sInv(id){const v=parseFloat(document.getElementById('eiv-'+id).value);if(!v||v<0)return;const inv=S.investments.find(i=>i.id===id);if(inv)inv.currentValue=v;S.editInvId=null;saveData();render()}
+function sDv(id){
+  const v=parseFloat(document.getElementById('div-'+id).value);if(!v||v<=0)return;
+  const inv=S.investments.find(i=>i.id===id);if(inv){
+    const d=`${S.viewYear}-${pad(S.viewMonth+1)}-15`;
+    inv.dividends.push({date:d,amount:v});
+    S.transactions.push({id:S.nextId++,date:d,type:'income',category:'Dividendi',desc:`Dividendo ${inv.name}`,amount:v,accountId:inv.accountId});
+  }
+  S.editDivId=null;saveData();render()
+}
+function addCtr(id){
+  const inv=S.investments.find(i=>i.id===id);if(!inv)return;
+  const d=`${S.viewYear}-${pad(S.viewMonth+1)}-01`;
+  S.transactions.push({id:S.nextId++,date:d,type:'invest',category:'ETF',desc:`Contributo ${inv.name}`,amount:inv.monthlyAmount,accountId:inv.accountId});
+  inv.invested+=inv.monthlyAmount;inv.currentValue+=inv.monthlyAmount;saveData();render()
+}
+function addInv(){
+  const name=document.getElementById('in').value,val=parseFloat(document.getElementById('iv').value)||0,monthly=parseFloat(document.getElementById('im').value)||0,accId=parseInt(document.getElementById('i-acc').value);
+  if(!name){alert('Inserisci il nome');return}
+  S.investments.push({id:S.nextId++,name,monthlyAmount:monthly,invested:val,currentValue:val,accountId:accId,dividends:[]});
+  if(val>0)S.transactions.push({id:S.nextId++,date:`${S.viewYear}-${pad(S.viewMonth+1)}-01`,type:'invest',category:'ETF',desc:`Apertura ${name}`,amount:val,accountId:accId});
+  S.invForm={name:'',monthly:'',val:'',accountId:accId};saveData();render()
+}
+function dInv(id){if(!confirm('Eliminare questo investimento?'))return;S.investments=S.investments.filter(i=>i.id!==id);saveData();render()}
+function addAcc(){
+  const name=document.getElementById('an').value,type=document.getElementById('at').value,bal=parseFloat(document.getElementById('ab').value)||0,note=document.getElementById('ano').value;
+  if(!name){alert('Inserisci il nome del conto');return}
+  const t=ACC_TYPES.find(a=>a.v===type);
+  const colors={checking:'info',savings:'success',investment:'warning',cash:'secondary',crypto:'danger',joint:'pink',other:'secondary'};
+  const isJoint=(type==='joint');
+  const partnerName=isJoint?(document.getElementById('a-partner')?.value||'Partner'):'';
+  const myMonthly=isJoint?(parseFloat(document.getElementById('a-my')?.value)||200):0;
+  const partnerMonthly=isJoint?(parseFloat(document.getElementById('a-par')?.value)||200):0;
+  S.accounts.push({id:S.nextId++,name,type,icon:t?.icon||'🏦',color:colors[type]||'secondary',initialBalance:bal,note,isJoint,partnerName,myMonthly,partnerMonthly});
+  S.accForm={name:'',type:'checking',initialBalance:'',note:'',isJoint:false,partnerName:'',myMonthly:200,partnerMonthly:200};
+  saveData();render()
+}
+function dAcc(id){
+  if(!confirm('Eliminare questo conto e tutti i movimenti associati?'))return;
+  S.accounts=S.accounts.filter(a=>a.id!==id);
+  S.transactions=S.transactions.filter(t=>t.accountId!==id&&t.toAccountId!==id);
+  saveData();render()
+}
+function setAccC(id,c){const a=S.accounts.find(a=>a.id===id);if(a)a.color=c;saveData();render()}
+function setAccI(id,i){const a=S.accounts.find(a=>a.id===id);if(a)a.icon=i;saveData();render()}
+
+// Registra service worker per PWA
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js')
+    .then(function(r){ console.log('SW ok'); })
+    .catch(function(e){ console.log('SW err', e); });
+}
+render();
+</script>
+</body>
+</html>

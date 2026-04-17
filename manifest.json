@@ -1,0 +1,52 @@
+{
+  "name": "Il mio portafoglio",
+  "short_name": "Portafoglio",
+  "description": "Gestione finanziaria personale con multi-conto e investimenti",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1c1c1b",
+  "theme_color": "#1c1c1b",
+  "orientation": "portrait-primary",
+  "lang": "it",
+  "categories": [
+    "finance",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "display_override": [
+    "standalone",
+    "fullscreen",
+    "minimal-ui"
+  ]
+}
