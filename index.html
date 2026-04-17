@@ -1137,18 +1137,10 @@ function toggleAutoReg(v){
 function resetAll(){
   if(!confirm('Sei sicuro? Verranno cancellati TUTTI i dati. Operazione irreversibile.'))return;
   if(!confirm('Ultima conferma: hai esportato il backup JSON?'))return;
-  var keys=['pfv4','portafoglio_v5_clean','portafoglio_pwa_v1','portafoglio_pwa_v2'];
-  keys.forEach(function(k){try{localStorage.removeItem(k);}catch(ex){}});
+  // Cancella tutto il localStorage
   try{localStorage.clear();}catch(ex){}
-  S=JSON.parse(JSON.stringify(DEF));
-  S.txForm_type='income';
-  S.txForm_accId=null;
-  S._accType=null;
-  S._editInv=null;
-  S._editDiv=null;
-  persist();
-  render();
-  alert('Reset completato! App svuotata.');
+  // Ricarica la pagina — riparte completamente vuota
+  window.location.reload(true);
 }
 function sT(t){S.activeTab=t;render()}
 function pM(){if(S.viewMonth===0){S.viewMonth=11;S.viewYear--}else S.viewMonth--;render()}
